@@ -31,8 +31,6 @@ public:
   }
 
   void startFallAnimation();
-  void startBounceAnimation();
-  void startArcAnimation();
   void startCombinedAnimation();
 
   void stopFallAnimation();

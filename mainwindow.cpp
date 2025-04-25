@@ -88,7 +88,7 @@ void MainWindow::createElement(QString path, int pos, int type, QString iconName
 
   connect(el, &Element::moveElementSig,  this, &MainWindow::moveElementSlot);
 
-  QTimer::singleShot(30000, this, [el, this]() { //-------------------------------------------------------
+  QTimer::singleShot(5000, this, [el, this]() { //-------------------------------------------------------
     el->startFallAnimation();
     canDrawRect = true;
     update();
@@ -157,12 +157,6 @@ void MainWindow::getUrlToIcon(QString nameIcon, int pos) {
     return createElement(iconPathFull, pos, 0, iconName);
   }
 
-//  iconPathFull = "/usr/share/icons/hicolor/48x48/apps/" + iconPath + ".png";
-
-//  if(QFileInfo::exists(iconPathFull)) {
-//    return createElement(iconPathFull, pos, 0);
-//  }
-
   iconPathFull = "/usr/share/icons/breeze/apps/48/" + iconPath + ".svg";
 
   if(QFileInfo::exists(iconPathFull)) {
@@ -187,7 +181,6 @@ void MainWindow::listDesktopShortcuts() {
   int pos = 0;
   QFileInfoList shortcutFiles = desktopDir.entryInfoList(filters, QDir::Files);
   for (const QFileInfo &fileInfo : shortcutFiles) {
-//    qDebug() << fileInfo.fileName();
     getUrlToIcon(fileInfo.fileName(), pos++);
   }
 }
@@ -196,23 +189,22 @@ QDomDocument MainWindow::readXmlFromFile(const QString &filePath) {
   QDomDocument xmlDoc;
   QFile file(filePath);
 
-  // Проверяем, можно ли открыть файл
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     qWarning() << "Не удалось открыть файл:" << filePath;
-    return xmlDoc;  // Возвращаем пустой документ
+    return xmlDoc;
   }
 
-  // Читаем и парсим XML содержимое
   QString errorMsg;
   int errorLine = 0, errorColumn = 0;
 
   if (!xmlDoc.setContent(&file, &errorMsg, &errorLine, &errorColumn)) {
     qWarning() << "Ошибка парсинга XML:" << errorMsg
                << "на строке" << errorLine << ", столбце" << errorColumn;
-        return QDomDocument();  // Пустой документ при ошибке
+
+    return QDomDocument();
   }
 
-  return xmlDoc;  // Возвращаем загруженный XML документ
+  return xmlDoc;
 }
 
 QString MainWindow::getWallpaperPathBySize(const QString &xmlData, int width , int height) {
@@ -220,14 +212,12 @@ QString MainWindow::getWallpaperPathBySize(const QString &xmlData, int width , i
   QString errorMsg;
   int errorLine, errorColumn;
 
-  // Парсим XML
   if (!doc.setContent(xmlData, &errorMsg, &errorLine, &errorColumn)) {
     qWarning() << "Ошибка парсинга XML:" << errorMsg
                   << "в строке" << errorLine << ", столбец" << errorColumn;
-        return QString();
+    return QString();
   }
 
-  // Ищем все теги <size>
   QDomNodeList sizeNodes = doc.elementsByTagName("size");
   for (int i = 0; i < sizeNodes.count(); ++i) {
     QDomElement sizeElem = sizeNodes.at(i).toElement();
@@ -238,7 +228,7 @@ QString MainWindow::getWallpaperPathBySize(const QString &xmlData, int width , i
     int currentHeight = sizeElem.attribute("height").toInt();
 
     if (currentWidth == width && currentHeight == height) {
-      return sizeElem.text().trimmed(); // Возвращаем путь к изображению
+      return sizeElem.text().trimmed();
     }
   }
 

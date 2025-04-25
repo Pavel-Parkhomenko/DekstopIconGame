@@ -77,7 +77,7 @@ void Element::startCombinedAnimation() {
 
   const int startX = this->x();
   const int startY = this->y();
-  const int endX = startX + directionX * getRand(150, 500); // Отлет в сторону на 150 пикселей
+  const int endX = startX + directionX * getRand(150, 500);
   const int endY = parentWidget()->height() - height() - 48;
   const int duration = 1000;
 
@@ -99,7 +99,7 @@ void Element::startCombinedAnimation() {
       x = qBound(0, static_cast<int>(x), parentWidget()->width() - width()); // Ограничиваем X
       elseDirection = true;
     } else elseDirection = false;
-    // Устанавливаем ключевые точки
+
     combinedAnimation->setKeyValueAt(progress, QPoint(static_cast<int>(x), static_cast<int>(y)));
   }
 
@@ -115,45 +115,7 @@ void Element::startCombinedAnimation() {
   combinedAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void Element::startArcAnimation() {
-  const int centerX = parentWidget()->width() / 2;  // Центр дуги по X
-  const int centerY = parentWidget()->height() / 2; // Центр дуги по Y
-  const int radius = 100;  // Радиус дуги
-  const int duration = 3000; // Длительность анимации
-
-  QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-  animation->setDuration(duration);
-
-  for (int t = 0; t <= duration; t += 100) {
-    double angle = (360.0 * t) / duration; // Угол по времени
-    double radians = qDegreesToRadians(angle); // Перевод градусов в радианы
-    int x = centerX + radius * cos(radians); // Координата X
-    int y = centerY - radius * sin(radians); // Координата Y (минус для направления вверх)
-
-    animation->setKeyValueAt(static_cast<double>(t) / duration, QPoint(x, y));
-  }
-
-  animation->setEasingCurve(QEasingCurve::Linear);
-  animation->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
-
-void Element::startBounceAnimation() {
-  qDebug() << __FUNCTION__;
-  QPropertyAnimation *bounceAnimation = new QPropertyAnimation(this, "posX");
-  bounceAnimation->setDuration(3000);
-  bounceAnimation->setStartValue(this->x());
-  bounceAnimation->setEndValue(this->x() + 500);
-  bounceAnimation->setEasingCurve(QEasingCurve::OutQuad);
-  bounceAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
 void Element::stopFallAnimation() {
-//  if (fallAnimation) {
-//    fallAnimation->stop();
-//    fallAnimation->deleteLater();
-//    fallAnimation = nullptr;
-//  }
   if(combinedAnimation) {
     combinedAnimation->stop();
     combinedAnimation->deleteLater();
