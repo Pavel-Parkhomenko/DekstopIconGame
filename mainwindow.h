@@ -44,6 +44,10 @@ protected:
   }
 
   void keyPressEvent(QKeyEvent *event) override {
+    if(idNoDrawRect.count() != icons.count()) {
+      QWidget::keyPressEvent(event);
+      return;
+    }
     if (event->key() == Qt::Key_Space) {
       idNoDrawRect.clear();
       for(auto icon: qAsConst(icons)) {

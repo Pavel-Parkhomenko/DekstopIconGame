@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
 
   setMouseTracking(true);
-  this->setFixedSize(1920, 1080);
-//  this->setFixedSize(800, 600);
+//  this->setFixedSize(1920, 1080);
+  this->setFixedSize(800, 800);
   listDesktopShortcuts();
 //  this->showMaximized();
 
@@ -90,9 +90,22 @@ void MainWindow::createElement(QString path, int pos, int type, QString iconName
 void MainWindow::moveElementSlot(int x, int y, int id) {
   if(x < iconsPos[id]->x() + 10 &&  x > iconsPos[id]->x() - 10 && y < iconsPos[id]->y() + 10 && y > iconsPos[id]->y() - 10) {
     icons[id]->fixedPosPlay = true;
+    icons[id]->switchDragging();
     icons[id]->move(iconsPos[id]->x(), iconsPos[id]->y());
     this->idNoDrawRect.push_back(id);
     update();
+  }
+
+  for(int i = 0; i < iconsPos.count(); i++) {
+    if(i == id) continue;
+
+    if(std::find(idNoDrawRect.begin(), idNoDrawRect.end(), i) != idNoDrawRect.end()) {
+      continue;
+    }
+
+    if(x < iconsPos[i]->x() + 10 &&  x > iconsPos[i]->x() - 10 && y < iconsPos[i]->y() + 10 && y > iconsPos[i]->y() - 10) {
+      icons[id]->incorrectPosition();
+    }
   }
 }
 

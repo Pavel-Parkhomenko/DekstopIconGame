@@ -24,6 +24,11 @@ public:
   bool fixedPosPlay = false;
   int idElement;
 
+  // это нужно для MainWindow
+  void switchDragging() {
+    dragging == true ? (dragging = false) : (dragging = true);
+  }
+
   void startFallAnimation();
   void startBounceAnimation();
   void startArcAnimation();
@@ -51,6 +56,12 @@ public:
     emit posYChanged();
   }
 
+  void incorrectPosition() {
+    incorrectPositionFlag = true;
+    startCombinedAnimation();
+    dragging = false;
+  }
+
 protected:
   void paintEvent(QPaintEvent *) override {
     QPainter painter(this);
@@ -72,6 +83,7 @@ protected:
   }
 
   void mousePressEvent(QMouseEvent *event) override {
+    incorrectPositionFlag = false;
     if (event->button() == Qt::LeftButton && fixedPosPlay == false) {
       dragging = true;
       lastMousePosition = event->pos();
@@ -82,7 +94,6 @@ protected:
 
   void mouseMoveEvent(QMouseEvent *event) override {
     if (dragging && fixedPosPlay == false) {
-
       int dx = event->pos().x() - lastMousePosition.x();
       int dy = event->pos().y() - lastMousePosition.y();
       move(x() + dx, y() + dy);
@@ -95,12 +106,13 @@ protected:
   }
 
   void mouseReleaseEvent(QMouseEvent *event) override {
+    if(incorrectPositionFlag) return;
     if (event->button() == Qt::LeftButton && fixedPosPlay == false) {
       startCombinedAnimation();
       dragging = false;
-//      startFallAnimation();
     }
   }
+
 
 signals:
   void posYChanged();
@@ -125,6 +137,8 @@ private:
 
   int mouseMoveDirX = 0; //1 вправо. -1 влево
   int repeatCount = 3;
+
+  bool incorrectPositionFlag = false;
 
   QString iconName;
 
