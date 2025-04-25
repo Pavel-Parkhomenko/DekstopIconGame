@@ -70,26 +70,29 @@ void MainWindow::parseWallPeperFile(QString text) {
   }
 }
 
+int overPos = 0;
 void MainWindow::createElement(QString path, int pos, int type, QString iconName) {
   Element *el = new Element(path, type, iconName, this);
-  if(50 + (pos * 120) + 100 > this->height()) {
-    el->move(50 + 64 + 30, 50 + (pos * 120));
+  if(50 + (pos * 120) + 200 > this->height()) {
+    if(overPos == 0) overPos = pos;
+    int x = 50 + 64 + 30;
+    int y = 50 + ((pos - overPos) * 120);
+    el->move(x, y);
+    iconsPos.push_back(new QPoint(x, y));
   } else {
     el->move(50, 50 + (pos * 120));
+    iconsPos.push_back(new QPoint(50, 50 + (pos * 120)));
   }
+
   icons.push_back(el);
-  iconsPos.push_back(new QPoint(50, 50 + (pos * 120)));
 
   connect(el, &Element::moveElementSig,  this, &MainWindow::moveElementSlot);
 
-  QTimer::singleShot(5000, this, [el, this]() { //-------------------------------------------------------
+  QTimer::singleShot(30000, this, [el, this]() { //-------------------------------------------------------
     el->startFallAnimation();
     canDrawRect = true;
     update();
   });
-
-//  el->startFallAnimation();
-  return;
 }
 
 void MainWindow::moveElementSlot(int x, int y, int id) {

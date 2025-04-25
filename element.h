@@ -75,12 +75,40 @@ protected:
     painter.setPen(Qt::white);
 
     QRect textRect = painter.fontMetrics().boundingRect(this->iconName);
-    int textX = (pixmap.width() - textRect.width()) / 2;
-    int textY = pixmap.height() + 10;
 
-    painter.drawText(textX, textY, this->iconName);
+    if(textRect.width() > this->width()) {
+      QStringList lst = this->iconName.split(" ");
 
-    painter.end();
+      if(lst.size() < 2) {
+        int textX = (pixmap.width() - textRect.width()) / 2;
+        int textY = pixmap.height() + 10;
+
+        painter.drawText(textX, textY, this->iconName);
+        painter.end();
+        return;
+      }
+
+      QRect lst0 = painter.fontMetrics().boundingRect(lst[0]);
+      QRect lst1 = painter.fontMetrics().boundingRect(lst[1]);
+
+      int textX0 = 0;
+      int textX1 = 0;
+      textX0 = (pixmap.width() - lst0.width()) / 2;
+      textX1 = (pixmap.width() - lst1.width()) / 2;
+
+      int textY = pixmap.height() + 15;
+      this->setFixedHeight(textY + 24);
+      painter.drawText(textX0, textY, lst[0]);
+      painter.drawText(textX1, textY + 20, lst[1]);
+      painter.end();
+    }
+    else {
+      int textX = (pixmap.width() - textRect.width()) / 2;
+      int textY = pixmap.height() + 10;
+
+      painter.drawText(textX, textY, this->iconName);
+      painter.end();
+    }
   }
 
   void mousePressEvent(QMouseEvent *event) override {

@@ -16,7 +16,7 @@ Element::Element(const QString &imagePath, int type, QString iconName, QWidget *
 
   this->iconName = iconName;
 
-  setFixedSize(pixmap.size() + QSize(0, 11));
+  setFixedSize(pixmap.size() + QSize(0, 15));
   setMouseTracking(true);
 
   connect(this, &Element::posYChanged, this, &Element::onPosYChanged);
