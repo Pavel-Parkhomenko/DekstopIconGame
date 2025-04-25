@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
 //  this->setFixedSize(800, 800);
   listDesktopShortcuts();
 //  this->showMaximized();
+  setWindowFlags(windowFlags() |  Qt::FramelessWindowHint);
 
 
   QDomDocument doc = readXmlFromFile("/usr/share/desktop-base/active-theme/wallpaper/gnome-background.xml");
@@ -71,7 +72,11 @@ void MainWindow::parseWallPeperFile(QString text) {
 
 void MainWindow::createElement(QString path, int pos, int type, QString iconName) {
   Element *el = new Element(path, type, iconName, this);
-  el->move(50, 50 + (pos * 120));
+  if(50 + (pos * 120) + 100 > this->height()) {
+    el->move(50 + 64 + 30, 50 + (pos * 120));
+  } else {
+    el->move(50, 50 + (pos * 120));
+  }
   icons.push_back(el);
   iconsPos.push_back(new QPoint(50, 50 + (pos * 120)));
 

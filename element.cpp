@@ -49,7 +49,7 @@ void Element::startFallAnimation() {
   QPropertyAnimation *fallAnimation = new QPropertyAnimation(this, "posY");
   fallAnimation->setDuration(getRand(1000, 2000));
   fallAnimation->setStartValue(this->y());
-  fallAnimation->setEndValue(parentWidget()->height() - height() - 46);
+  fallAnimation->setEndValue(parentWidget()->height() - height() - 48);
 //  animation->setEasingCurve(QEasingCurve::OutBounce);
 
   connect(fallAnimation, &QPropertyAnimation::finished, this, &Element::startCombinedAnimation);
@@ -78,7 +78,7 @@ void Element::startCombinedAnimation() {
   const int startX = this->x();
   const int startY = this->y();
   const int endX = startX + directionX * getRand(150, 500); // Отлет в сторону на 150 пикселей
-  const int endY = parentWidget()->height() - height() - 46;
+  const int endY = parentWidget()->height() - height() - 48;
   const int duration = 1000;
 
   combinedAnimation = new QPropertyAnimation(this, "pos");
