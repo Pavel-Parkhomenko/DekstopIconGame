@@ -51,6 +51,7 @@ protected:
     if (event->key() == Qt::Key_Space) {
       idNoDrawRect.clear();
       for(auto icon: qAsConst(icons)) {
+        icon->wasStart = false;
         icon->startFallAnimation();
         icon->fixedPosPlay = false;
       }

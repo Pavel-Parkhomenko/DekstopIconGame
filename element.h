@@ -22,6 +22,7 @@ public:
 
   int getRand(int min, int max);
   bool fixedPosPlay = false;
+  bool wasStart = false;
   int idElement;
 
   // это нужно для MainWindow
@@ -83,6 +84,8 @@ protected:
   }
 
   void mousePressEvent(QMouseEvent *event) override {
+    if(this->wasStart == false) return;
+
     incorrectPositionFlag = false;
     if (event->button() == Qt::LeftButton && fixedPosPlay == false) {
       dragging = true;
@@ -107,6 +110,8 @@ protected:
 
   void mouseReleaseEvent(QMouseEvent *event) override {
     if(incorrectPositionFlag) return;
+    this->wasStart = true;
+
     if (event->button() == Qt::LeftButton && fixedPosPlay == false) {
       startCombinedAnimation();
       dragging = false;
@@ -132,11 +137,11 @@ private:
   QPixmap pixmap;
   int m_posY;
   int m_posX;
-  QPropertyAnimation *fallAnimation;
+//  QPropertyAnimation *fallAnimation;
   QPropertyAnimation *combinedAnimation;
 
   int mouseMoveDirX = 0; //1 вправо. -1 влево
-  int repeatCount = 3;
+  int repeatCount = 5;
 
   bool incorrectPositionFlag = false;
 

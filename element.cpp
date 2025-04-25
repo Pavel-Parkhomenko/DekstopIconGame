@@ -44,7 +44,9 @@ QPixmap Element::renderSvgToPixmap(const QString &filePath, const QSize &size) {
 }
 
 void Element::startFallAnimation() {
-  fallAnimation = new QPropertyAnimation(this, "posY");
+  if(this->wasStart) return;
+  this->wasStart = true;
+  QPropertyAnimation *fallAnimation = new QPropertyAnimation(this, "posY");
   fallAnimation->setDuration(getRand(1000, 2000));
   fallAnimation->setStartValue(this->y());
   fallAnimation->setEndValue(parentWidget()->height() - height() - 46);
@@ -52,19 +54,22 @@ void Element::startFallAnimation() {
 
   connect(fallAnimation, &QPropertyAnimation::finished, this, &Element::startCombinedAnimation);
 
-  connect(fallAnimation, &QPropertyAnimation::finished, this, [this]() {
+  connect(fallAnimation, &QPropertyAnimation::finished, this, [fallAnimation]() {
     fallAnimation->deleteLater();
-    fallAnimation = nullptr;
   });
 
   fallAnimation->start();
 }
 
-
+bool elseDirection = false;
+int prevDirectionX = 0;
 void Element::startCombinedAnimation() {
 
   if (repeatCount <= 0) return;
   int directionX = QRandomGenerator::global()->bounded(2) == 0 ? -1 : 1;
+
+  if(elseDirection) directionX = -1 * prevDirectionX;
+  prevDirectionX = directionX;
 
   if(dragging) {
     directionX = mouseMoveDirX;
@@ -72,7 +77,7 @@ void Element::startCombinedAnimation() {
 
   const int startX = this->x();
   const int startY = this->y();
-  const int endX = startX + directionX * getRand(150, 300); // Отлет в сторону на 150 пикселей
+  const int endX = startX + directionX * getRand(150, 500); // Отлет в сторону на 150 пикселей
   const int endY = parentWidget()->height() - height() - 46;
   const int duration = 1000;
 
@@ -85,7 +90,6 @@ void Element::startCombinedAnimation() {
     // Линейное движение по X
     double x = startX + progress * (endX - startX);
 
-    // Падение с использованием эффекта дуги (например, синус)
     double arcEffect = sin(progress * M_PI) * 200; // Высота дуги
     double y = startY + progress * (endY - startY) - arcEffect;
 
@@ -93,7 +97,8 @@ void Element::startCombinedAnimation() {
     if (x < 0 || x > parentWidget()->width() - width()) {
       directionX *= -1; // Изменяем направление
       x = qBound(0, static_cast<int>(x), parentWidget()->width() - width()); // Ограничиваем X
-    }
+      elseDirection = true;
+    } else elseDirection = false;
     // Устанавливаем ключевые точки
     combinedAnimation->setKeyValueAt(progress, QPoint(static_cast<int>(x), static_cast<int>(y)));
   }
@@ -144,11 +149,11 @@ void Element::startBounceAnimation() {
 }
 
 void Element::stopFallAnimation() {
-  if (fallAnimation) {
-    fallAnimation->stop();
-    fallAnimation->deleteLater();
-    fallAnimation = nullptr;
-  }
+//  if (fallAnimation) {
+//    fallAnimation->stop();
+//    fallAnimation->deleteLater();
+//    fallAnimation = nullptr;
+//  }
   if(combinedAnimation) {
     combinedAnimation->stop();
     combinedAnimation->deleteLater();
